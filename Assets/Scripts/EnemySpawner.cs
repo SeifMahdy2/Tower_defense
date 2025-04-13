@@ -1,7 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
 public class EnemySpawner : MonoBehaviour
@@ -22,7 +20,6 @@ public class EnemySpawner : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private int currentWave = 0; // Start at 0 so first wave becomes 1
     [SerializeField] private float timeSinceLastSpawn;
-    [SerializeField] private float waveTimer;
     [SerializeField] private int enemiesLeftToSpawn;
     [SerializeField] private int enemiesAlive;
     [SerializeField] private bool isSpawning = false; // Start as false to wait for first wave
@@ -76,21 +73,9 @@ public class EnemySpawner : MonoBehaviour
         }
         
         if (enemyPrefabs.Length > 0) {
-            // Make sure LevelManager exists before spawning
-            if (LevelManager.main == null || LevelManager.main.startPoint == null) {
-                Debug.LogError("Cannot spawn enemy: LevelManager or startPoint is missing!");
-                return;
-            }
-            
             GameObject prefabToSpawn = enemyPrefabs[0];
             GameObject enemy = Instantiate(prefabToSpawn, LevelManager.main.startPoint.position, Quaternion.identity);
             enemy.transform.parent = transform; // Parent to spawner for organization
-            
-            // Make sure the Enemy component is attached
-            if (!enemy.GetComponent<Enemy>() && !enemy.GetComponent<EnemyMovement>()) {
-                enemy.AddComponent<EnemyMovement>();
-            }
-            
             enemiesLeftToSpawn--;
             enemiesAlive++;
             Debug.Log("Spawning enemy. Enemies left to spawn: " + enemiesLeftToSpawn + ", Alive: " + enemiesAlive);

@@ -11,8 +11,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - PlacementArea
+  - Tower
   - 
   - 
   - 
@@ -44,18 +44,18 @@ TagManager:
   - name: grass
     uniqueID: 1028907339
     locked: 0
-  - name: Enemy
-    uniqueID: 395082995
+  - name: castle
+    uniqueID: 1291230901
     locked: 0
   - name: deco
     uniqueID: 4219411813
     locked: 0
-  - name: castle
-    uniqueID: 1291230901
-    locked: 0
-  - name: archer
-    uniqueID: 3845243361
+  - name: Enemy
+    uniqueID: 395082995
     locked: 0
   - name: PlacementPoints
     uniqueID: 2908551361
+    locked: 0
+  - name: Towers
+    uniqueID: 3845243361
     locked: 0

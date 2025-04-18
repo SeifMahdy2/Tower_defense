@@ -5,6 +5,12 @@ public class FrostProjectile : Projectile
     public float slowAmount = 0.5f;
     public float slowDuration = 2f;
     
+    // Add Update method to ensure proper movement
+    void Update()
+    {
+        base.Update();
+    }
+    
     protected override void HitTarget()
     {
         // Create frost impact effect

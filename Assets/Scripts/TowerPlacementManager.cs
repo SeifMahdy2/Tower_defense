@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using TD;
 
 public class TowerPlacementManager : MonoBehaviour
 {
@@ -41,6 +42,7 @@ public class TowerPlacementManager : MonoBehaviour
 
     // Gold management
     private int gold = 300; // Starting gold
+    private GameManager gameManager; // Add reference to the GameManager
 
     // Camera reference for converting screen to world position
     private Camera mainCamera;
@@ -48,7 +50,23 @@ public class TowerPlacementManager : MonoBehaviour
     private void Start()
     {
         mainCamera = Camera.main;
-        UpdateGoldText();
+        
+        // Find the GameManager in the scene
+        gameManager = FindObjectOfType<GameManager>();
+        
+        // If there's no GameManager, use the default gold value
+        if (gameManager == null)
+        {
+            UpdateGoldText();
+            Debug.LogWarning("No GameManager found! Using default gold value.");
+        }
+        else
+        {
+            // If GameManager exists, use its gold instead
+            gold = gameManager.GetCurrentGold();
+            UpdateGoldText();
+        }
+        
         rangeIndicator.SetActive(false);
     }
 
@@ -107,49 +125,125 @@ public class TowerPlacementManager : MonoBehaviour
             return;
         }
 
-        // Instantiate the ghost tower from the selected prefab
+        // First try to find the Tower component
+        Tower towerComponent = selectedTowerPrefab.GetComponent<Tower>();
+        
+        // If Tower component is not found, try to find any derived type (like ArcherTower)
+        if (towerComponent == null)
+        {
+            towerComponent = selectedTowerPrefab.GetComponent<ArcherTower>();
+            
+            if (towerComponent == null)
+            {
+                Debug.LogError("The selected tower prefab does not have a Tower component!");
+                return;
+            }
+        }
+
+        // Create the ghost tower
         ghostTower = Instantiate(selectedTowerPrefab, Vector3.zero, Quaternion.identity);
         
-        // Get the sprite renderer and set opacity
-        ghostSpriteRenderer = ghostTower.GetComponent<SpriteRenderer>();
-        Color ghostColor = ghostSpriteRenderer.color;
-        ghostColor.a = 0.6f;
-        ghostSpriteRenderer.color = ghostColor;
+        // Make it semi-transparent
+        ApplyGhostMaterial(ghostTower);
         
-        // Get the tower component for range display
-        ghostTowerComponent = ghostTower.GetComponent<Tower>();
-        if (ghostTowerComponent == null)
-        {
-            Debug.LogError("The selected tower prefab does not have a Tower component!");
-            Destroy(ghostTower);
-            return;
-        }
-        
-        // Show range indicator
-        rangeIndicator.SetActive(true);
-        rangeIndicator.transform.localScale = new Vector3(
-            ghostTowerComponent.GetRange() * 2, 
-            ghostTowerComponent.GetRange() * 2, 
-            1
-        );
-        
-        // Add "Ghost" tag for identification
-        // ghostTower.tag = "Ghost"; // Using tags requires defining them in Tag Manager
-        ghostTower.name = "GhostTower"; // Using name instead of tag
-        
-        // Disable colliders and scripts
-        Collider2D[] colliders = ghostTower.GetComponentsInChildren<Collider2D>();
-        foreach (Collider2D collider in colliders)
-        {
-            collider.enabled = false;
-        }
-        
-        MonoBehaviour[] scripts = ghostTower.GetComponentsInChildren<MonoBehaviour>();
+        // Disable any scripts
+        MonoBehaviour[] scripts = ghostTower.GetComponents<MonoBehaviour>();
         foreach (MonoBehaviour script in scripts)
         {
-            if (script != ghostTowerComponent)
-                script.enabled = false;
+            script.enabled = false;
         }
+        
+        // Set ghost tower inactive initially
+        ghostTower.SetActive(false);
+        
+        isDragging = true;
+    }
+
+    private void ApplyGhostMaterial(GameObject tower)
+    {
+        // Get the sprite renderer and set opacity
+        ghostSpriteRenderer = tower.GetComponent<SpriteRenderer>();
+        if (ghostSpriteRenderer != null)
+        {
+            Color ghostColor = ghostSpriteRenderer.color;
+            ghostColor.a = 0.6f;
+            ghostSpriteRenderer.color = ghostColor;
+        }
+        else
+        {
+            Debug.LogWarning("Ghost tower has no SpriteRenderer component");
+        }
+        
+        // Get child sprite renderers if any
+        SpriteRenderer[] childRenderers = tower.GetComponentsInChildren<SpriteRenderer>();
+        foreach (SpriteRenderer renderer in childRenderers)
+        {
+            if (renderer != ghostSpriteRenderer) // Don't process the main one twice
+            {
+                Color color = renderer.color;
+                color.a = 0.6f;
+                renderer.color = color;
+            }
+        }
+        
+        // Show and configure range indicator
+        if (rangeIndicator != null)
+        {
+            rangeIndicator.SetActive(true);
+            
+            // Get tower range and set indicator scale
+            float range = 5f; // Default range
+            
+            // Try to get the range from the tower component
+            Tower towerComponent = tower.GetComponent<Tower>();
+            if (towerComponent != null)
+            {
+                range = towerComponent.GetRange();
+                ghostTowerComponent = towerComponent; // Store reference for later use
+            }
+            else
+            {
+                // Try with specific tower types if base class not found
+                ArcherTower archerTower = tower.GetComponent<ArcherTower>();
+                if (archerTower != null)
+                {
+                    range = archerTower.GetRange();
+                }
+                
+                MageTower mageTower = tower.GetComponent<MageTower>();
+                if (mageTower != null)
+                {
+                    range = mageTower.GetRange();
+                }
+                
+                FrostTower frostTower = tower.GetComponent<FrostTower>();
+                if (frostTower != null)
+                {
+                    range = frostTower.GetRange();
+                }
+                
+                CannonTower cannonTower = tower.GetComponent<CannonTower>();
+                if (cannonTower != null)
+                {
+                    range = cannonTower.GetRange();
+                }
+            }
+            
+            // Set the range indicator scale
+            rangeIndicator.transform.localScale = new Vector3(range * 2, range * 2, 1);
+            
+            // Set initial color
+            SpriteRenderer rangeRenderer = rangeIndicator.GetComponent<SpriteRenderer>();
+            if (rangeRenderer != null)
+            {
+                Color rangeColor = validPlacementColor;
+                rangeColor.a = 0.3f;
+                rangeRenderer.color = rangeColor;
+            }
+        }
+        
+        // Activate the ghost tower
+        tower.SetActive(true);
     }
 
     private void CheckPlacementValidity()
@@ -196,50 +290,71 @@ public class TowerPlacementManager : MonoBehaviour
         }
         
         // Check if player has enough gold
-        if (gold < selectedTowerCost)
-            return false;
-        
-        return true;
+        if (gameManager != null)
+        {
+            // Use GameManager's gold system
+            return gameManager.GetCurrentGold() >= selectedTowerCost;
+        }
+        else
+        {
+            // Fallback to internal gold
+            return gold >= selectedTowerCost;
+        }
     }
 
     private void TryPlaceTower()
     {
         if (canPlace)
         {
-            // Place actual tower with proper z-position
-            Vector3 placementPosition = ghostTower.transform.position;
-            placementPosition.z = 0f; // Ensure z is 0 to appear in front of the map
-            GameObject tower = Instantiate(selectedTowerPrefab, placementPosition, Quaternion.identity);
-            
-            // Explicitly set the layer to Tower layer to prevent future placement
-            tower.layer = LayerMask.NameToLayer("Tower");
-            Debug.Log("Set tower layer to: " + tower.layer + " Layer name: " + LayerMask.LayerToName(tower.layer));
-            
-            // Make sure all child objects are also on the Tower layer
-            foreach (Transform child in tower.transform)
-            {
-                child.gameObject.layer = LayerMask.NameToLayer("Tower");
-            }
-            
-            // Add a collider if it doesn't have one
-            if (tower.GetComponent<Collider2D>() == null)
-            {
-                CircleCollider2D collider = tower.AddComponent<CircleCollider2D>();
-                collider.radius = 0.6f;
-                Debug.Log("Added collider with radius: " + collider.radius);
-            }
-            
             // Deduct gold
-            gold -= selectedTowerCost;
-            UpdateGoldText();
+            bool goldSpent = false;
             
-            // Play placement sound
-            // audioSource.PlayOneShot(placementSound);
+            if (gameManager != null)
+            {
+                // Use GameManager's gold system
+                goldSpent = gameManager.SpendGold(selectedTowerCost);
+            }
+            else
+            {
+                // Fallback to internal gold
+                gold -= selectedTowerCost;
+                goldSpent = true;
+                UpdateGoldText();
+            }
             
-            // Add haptic feedback for mobile
-            #if UNITY_IOS || UNITY_ANDROID
-            Handheld.Vibrate();
-            #endif
+            if (goldSpent)
+            {
+                // Place actual tower with proper z-position
+                Vector3 placementPosition = ghostTower.transform.position;
+                placementPosition.z = 0f; // Ensure z is 0 to appear in front of the map
+                GameObject tower = Instantiate(selectedTowerPrefab, placementPosition, Quaternion.identity);
+                
+                // Explicitly set the layer to Tower layer to prevent future placement
+                tower.layer = LayerMask.NameToLayer("Tower");
+                Debug.Log("Set tower layer to: " + tower.layer + " Layer name: " + LayerMask.LayerToName(tower.layer));
+                
+                // Make sure all child objects are also on the Tower layer
+                foreach (Transform child in tower.transform)
+                {
+                    child.gameObject.layer = LayerMask.NameToLayer("Tower");
+                }
+                
+                // Add a collider if it doesn't have one
+                if (tower.GetComponent<Collider2D>() == null)
+                {
+                    CircleCollider2D collider = tower.AddComponent<CircleCollider2D>();
+                    collider.radius = 0.6f;
+                    Debug.Log("Added collider with radius: " + collider.radius);
+                }
+                
+                // Play placement sound
+                // audioSource.PlayOneShot(placementSound);
+                
+                // Add haptic feedback for mobile
+                #if UNITY_IOS || UNITY_ANDROID
+                Handheld.Vibrate();
+                #endif
+            }
         }
         
         // Clean up ghost tower
@@ -306,13 +421,27 @@ public class TowerPlacementManager : MonoBehaviour
     {
         if (goldText != null)
         {
-            goldText.text = gold.ToString();
+            if (gameManager != null)
+            {
+                goldText.text = gameManager.GetCurrentGold().ToString();
+            }
+            else
+            {
+                goldText.text = gold.ToString();
+            }
         }
     }
 
     // Method to check if the player can afford a tower
-    public bool CanAffordTower(int towerCost)
+    public bool CanAffordTower(int cost)
     {
-        return gold >= towerCost;
+        if (gameManager != null)
+        {
+            return gameManager.GetCurrentGold() >= cost;
+        }
+        else
+        {
+            return gold >= cost;
+        }
     }
 } 

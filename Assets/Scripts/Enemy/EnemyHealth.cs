@@ -1,5 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+
+public enum EnemyDifficulty
+{
+    Easy,
+    Medium,
+    Hard
+}
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -7,51 +15,115 @@ public class EnemyHealth : MonoBehaviour
     public int maxHealth = 100;
     private int currentHealth;
     
+    [Header("Difficulty")]
+    [SerializeField] private EnemyDifficulty difficulty = EnemyDifficulty.Easy;
+    [SerializeField] private int damageToBase = 1; // Base damage to castle when reaching the end
+    
     [Header("UI")]
     public GameObject healthBarPrefab;
     private GameObject healthBarInstance;
-    private Slider healthSlider;
+    private EnemyHealthDisplay healthDisplay;
     
-    [Header("Effects")]
-    public GameObject deathEffect;
+    [Header("Hit Effect")]
+    [SerializeField] private float hitFlashDuration = 0.2f;
+    [SerializeField] private Color hitColor = Color.red;
     
     // References
-    private GameManager gameManager;
+    private TD.GameManager gameManager;
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+    
+    // Public methods for health display
+    public int GetCurrentHealth() { return currentHealth; }
+    public int GetMaxHealth() { return maxHealth; }
     
     void Start()
     {
-        // Set starting health
-        currentHealth = maxHealth;
+        // Set starting health based on difficulty
+        SetupHealthByDifficulty();
         
         // Find the game manager
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<TD.GameManager>();
+        
+        // Get components
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        
+        if (spriteRenderer != null)
+        {
+            originalColor = spriteRenderer.color;
+        }
         
         // Create health bar
         if (healthBarPrefab != null)
         {
-            healthBarInstance = Instantiate(healthBarPrefab, transform.position, Quaternion.identity);
-            healthBarInstance.transform.SetParent(GameObject.Find("Canvas").transform);
-            healthSlider = healthBarInstance.GetComponentInChildren<Slider>();
-            UpdateHealthBar();
+            // Find the Canvas
+            Canvas canvas = FindObjectOfType<Canvas>();
+            
+            if (canvas != null)
+            {
+                // Instantiate the healthbar as child of canvas
+                healthBarInstance = Instantiate(healthBarPrefab, canvas.transform);
+                
+                // Get the health display component
+                healthDisplay = healthBarInstance.GetComponent<EnemyHealthDisplay>();
+                if (healthDisplay != null)
+                {
+                    healthDisplay.SetupHealthBar(this);
+                }
+                else
+                {
+                    Debug.LogError("Health bar prefab doesn't have EnemyHealthDisplay component!");
+                }
+            }
+            else
+            {
+                Debug.LogError("No Canvas found in the scene for health bars!");
+            }
         }
     }
     
     void Update()
     {
-        // Update health bar position
-        if (healthBarInstance != null)
+        // The position update is now handled by the EnemyHealthDisplay component
+    }
+    
+    private void SetupHealthByDifficulty()
+    {
+        // Adjust health based on difficulty
+        switch (difficulty)
         {
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position + Vector3.up * 0.5f);
-            healthBarInstance.transform.position = screenPos;
+            case EnemyDifficulty.Easy:
+                maxHealth = 50;
+                damageToBase = 1;
+                break;
+            case EnemyDifficulty.Medium:
+                maxHealth = 100;
+                damageToBase = 2;
+                break;
+            case EnemyDifficulty.Hard:
+                maxHealth = 200;
+                damageToBase = 3;
+                break;
         }
+        
+        currentHealth = maxHealth;
     }
     
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
         
-        // Update the health bar
-        UpdateHealthBar();
+        // Flash red when hit
+        if (spriteRenderer != null)
+        {
+            StopAllCoroutines();
+            StartCoroutine(FlashEffect());
+        }
+        
+        // Update the health bar - now handled by the EnemyHealthDisplay component
+        // which updates automatically in its Update method
         
         // Check for death
         if (currentHealth <= 0)
@@ -60,27 +132,61 @@ public class EnemyHealth : MonoBehaviour
         }
     }
     
-    void UpdateHealthBar()
+    IEnumerator FlashEffect()
     {
-        if (healthSlider != null)
-        {
-            healthSlider.value = (float)currentHealth / maxHealth;
-        }
+        // Change to hit color
+        spriteRenderer.color = hitColor;
+        
+        // Wait for duration
+        yield return new WaitForSeconds(hitFlashDuration);
+        
+        // Change back to original color
+        spriteRenderer.color = originalColor;
     }
     
     void Die()
     {
-        // Create death effect
-        if (deathEffect != null)
+        // Play death animation
+        if (animator != null)
         {
-            GameObject effect = Instantiate(deathEffect, transform.position, Quaternion.identity);
-            Destroy(effect, 2f);
+            // Disable movement
+            EnemyMovement movement = GetComponent<EnemyMovement>();
+            if (movement != null)
+            {
+                movement.enabled = false;
+            }
+            
+            // Trigger death animation
+            animator.SetTrigger("Death");
+            
+            // Destroy the object after animation finishes
+            Destroy(gameObject, animator.GetCurrentAnimatorStateInfo(0).length);
+        }
+        else
+        {
+            // No animator, destroy immediately
+            Destroy(gameObject);
         }
         
-        // Add gold to the player
+        // Add gold to the player based on difficulty
         if (gameManager != null)
         {
-            gameManager.AddGold(10);
+            int goldReward = 5; // Base reward
+            
+            switch (difficulty)
+            {
+                case EnemyDifficulty.Easy:
+                    goldReward = 5;
+                    break;
+                case EnemyDifficulty.Medium:
+                    goldReward = 10;
+                    break;
+                case EnemyDifficulty.Hard:
+                    goldReward = 20;
+                    break;
+            }
+            
+            gameManager.AddGold(goldReward);
         }
         
         // Remove health bar
@@ -88,9 +194,11 @@ public class EnemyHealth : MonoBehaviour
         {
             Destroy(healthBarInstance);
         }
-        
-        // Destroy the enemy
-        Destroy(gameObject);
+    }
+    
+    public int GetDamageToBase()
+    {
+        return damageToBase;
     }
     
     void OnDestroy()

@@ -12,8 +12,7 @@ GameObject:
   - component: {fileID: 2127601613776084497}
   - component: {fileID: 3066141988125659116}
   - component: {fileID: 6561156784130525918}
-  - component: {fileID: 1019556469282909623}
-  - component: {fileID: -7950652048122644713}
+  - component: {fileID: 8589275672229008107}
   m_Layer: 7
   m_Name: Frost_Character_0
   m_TagString: Untagged
@@ -29,12 +28,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1311701736340895116}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -26.114601, y: -0.52999926, z: 1.2159}
+  m_LocalPosition: {x: -71.41521, y: 39.2501, z: 1.2159}
   m_LocalScale: {x: 0.48877993, y: 0.48877993, z: 0.48877993}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2377972139172521507}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2127601613776084497
 SpriteRenderer:
@@ -144,42 +144,7 @@ CircleCollider2D:
   m_Offset: {x: -0.0000038146973, y: -0.0000038146973}
   serializedVersion: 2
   m_Radius: 1.515
---- !u!58 &1019556469282909623
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1311701736340895116}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.0000038146973, y: -0.0000038146973}
-  serializedVersion: 2
-  m_Radius: 1.515
---- !u!114 &-7950652048122644713
+--- !u!114 &8589275672229008107
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -188,12 +153,90 @@ MonoBehaviour:
   m_GameObject: {fileID: 1311701736340895116}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2073c1c94cfba514f9707f831d0faed8, type: 3}
+  m_Script: {fileID: 11500000, guid: e818f0dd87c45d5478d7cf2d5d9c3c24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationPoint: {fileID: 0}
+  towerName: Frost
+  cost: 125
+  range: 4.5
+  fireRate: 1.5
+  damage: 7
+  rotationPoint: {fileID: 2377972139172521507}
+  firePoint: {fileID: 8663575238016451741}
+  projectilePrefab: {fileID: 5083969121154366131, guid: 8e68a42d7cf507b4691a24eb53de00a4, type: 3}
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 0
-  range: 5
-  rotationSpeed: 5
+    m_Bits: 256
+  animator: {fileID: 3066141988125659116}
+  upgradeLevel: 1
+  maxUpgradeLevel: 3
+  upgradeCost: 75
+  idleAnimationName: Idle
+  shootAnimationName: Shooting
+  frostPrefab: {fileID: 5083969121154366131, guid: 8e68a42d7cf507b4691a24eb53de00a4, type: 3}
+  slowAmount: 1
+  slowDuration: 1.5
+  frostSpeed: 10
+--- !u!1 &7023852407017707923
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8663575238016451741}
+  m_Layer: 7
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8663575238016451741
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7023852407017707923}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.03, y: 1.23, z: 0}
+  m_LocalScale: {x: 0.59341, y: 0.59341, z: 0.59341}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2377972139172521507}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8996930605128165962
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2377972139172521507}
+  m_Layer: 7
+  m_Name: RotationPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2377972139172521507
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8996930605128165962}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.35, y: -1.09, z: -2.4876225}
+  m_LocalScale: {x: 0.8047809, y: 0.8047809, z: 0.8047809}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8663575238016451741}
+  m_Father: {fileID: 8309948726775953923}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

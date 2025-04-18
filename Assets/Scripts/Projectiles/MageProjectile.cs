@@ -4,6 +4,12 @@ public class MageProjectile : Projectile
 {
     public float splashRadius = 1.5f;
     
+    // Add Update method to ensure proper movement
+    void Update()
+    {
+        base.Update();
+    }
+    
     protected override void HitTarget()
     {
         // Create impact effect

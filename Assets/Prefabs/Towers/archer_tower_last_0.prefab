@@ -1,5 +1,68 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &534033662164696664
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 934814957415587091}
+  m_Layer: 7
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &934814957415587091
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534033662164696664}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.07, y: 1.26, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2881184393462604037}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4606353276107756190
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2881184393462604037}
+  m_Layer: 7
+  m_Name: RotationPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2881184393462604037
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4606353276107756190}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.24, y: -1.54, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 934814957415587091}
+  m_Father: {fileID: 6727755512177930242}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5129827744004312511
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,7 +75,7 @@ GameObject:
   - component: {fileID: 1606956400765297940}
   - component: {fileID: 8090057748789157323}
   - component: {fileID: 3429809760940168413}
-  - component: {fileID: -162540865357859099}
+  - component: {fileID: 7334305695903759514}
   m_Layer: 7
   m_Name: archer_tower_last_0
   m_TagString: Untagged
@@ -28,12 +91,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5129827744004312511}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.9, y: -4.4, z: 0}
+  m_LocalPosition: {x: -72.1006, y: 33.280098, z: 0}
   m_LocalScale: {x: 0.39336073, y: 0.39336073, z: 0.39336073}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2881184393462604037}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1606956400765297940
 SpriteRenderer:
@@ -143,7 +207,7 @@ CircleCollider2D:
   m_Offset: {x: 0.0000038146973, y: 0}
   serializedVersion: 2
   m_Radius: 1.91
---- !u!114 &-162540865357859099
+--- !u!114 &7334305695903759514
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,12 +216,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 5129827744004312511}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2073c1c94cfba514f9707f831d0faed8, type: 3}
+  m_Script: {fileID: 11500000, guid: 92856464231ba2c42ab6ab84b1fda43b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationPoint: {fileID: 0}
+  towerName: Archer
+  cost: 100
+  range: 5
+  fireRate: 1.5
+  damage: 10
+  rotationPoint: {fileID: 2881184393462604037}
+  firePoint: {fileID: 934814957415587091}
+  projectilePrefab: {fileID: 2223384781503515584, guid: cc3c2b920b2d1b449ac090e27894ae3b, type: 3}
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 0
-  range: 5
-  rotationSpeed: 5
+    m_Bits: 256
+  animator: {fileID: 8090057748789157323}
+  upgradeLevel: 1
+  maxUpgradeLevel: 3
+  upgradeCost: 50
+  idleAnimationName: Idle
+  shootAnimationName: Shooting
+  arrowPrefab: {fileID: 2223384781503515584, guid: cc3c2b920b2d1b449ac090e27894ae3b, type: 3}
+  arrowSpeed: 15

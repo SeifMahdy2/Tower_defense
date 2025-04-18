@@ -11,6 +11,8 @@ public class EnemyMovement : MonoBehaviour
     
     private WaypointPath path;
     private SpriteRenderer spriteRenderer;
+    private Animator animator;
+    private EnemyHealth healthComponent;
     
     void Start()
     {
@@ -29,8 +31,16 @@ public class EnemyMovement : MonoBehaviour
         // Store original speed
         originalSpeed = speed;
         
-        // Get sprite renderer
+        // Get components
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        healthComponent = GetComponent<EnemyHealth>();
+        
+        // Play walk animation if available
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", true);
+        }
     }
     
     void Update()
@@ -67,15 +77,37 @@ public class EnemyMovement : MonoBehaviour
     
     void ReachedEnd()
     {
-        // Damage the player castle
-        GameManager gameManager = FindObjectOfType<GameManager>();
-        if (gameManager != null)
+        // Get damage amount from health component (based on difficulty)
+        int damageAmount = 1;
+        if (healthComponent != null)
         {
-            gameManager.EnemyReachedEnd();
+            damageAmount = healthComponent.GetDamageToBase();
         }
         
-        // Destroy the enemy
-        Destroy(gameObject);
+        // Damage the player castle based on enemy difficulty
+        TD.GameManager gameManager = FindObjectOfType<TD.GameManager>();
+        if (gameManager != null)
+        {
+            // Play attack animation if available
+            if (animator != null)
+            {
+                animator.SetTrigger("Attack");
+                // Add a slight delay before destroying to allow animation to play
+                Destroy(gameObject, 0.5f);
+            }
+            else
+            {
+                // If no animator, destroy immediately
+                Destroy(gameObject);
+            }
+            
+            gameManager.EnemyReachedEnd(damageAmount);
+        }
+        else
+        {
+            // No game manager found, just destroy the enemy
+            Destroy(gameObject);
+        }
     }
     
     // Called by FrostProjectile to slow down the enemy
@@ -93,22 +125,10 @@ public class EnemyMovement : MonoBehaviour
         // Apply slow
         speed = originalSpeed * (1 - slowAmount);
         
-        // Change color to indicate slow
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = new Color(0.5f, 0.5f, 1f);
-        }
-        
         // Wait for duration
         yield return new WaitForSeconds(duration);
         
         // Return to normal speed
         speed = originalSpeed;
-        
-        // Return to normal color
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = Color.white;
-        }
     }
 } 

@@ -12,8 +12,7 @@ GameObject:
   - component: {fileID: 3029316603420021401}
   - component: {fileID: 5477318801384320933}
   - component: {fileID: 4534571562075455145}
-  - component: {fileID: 3177802682797088488}
-  - component: {fileID: 6780172053823980435}
+  - component: {fileID: 2681514373772721674}
   m_Layer: 7
   m_Name: mage_tower_0
   m_TagString: Untagged
@@ -29,12 +28,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5746640681173720454}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -23.499401, y: -0.4800992, z: 1.2159}
+  m_LocalPosition: {x: -68.8, y: 39.3, z: 1.2159}
   m_LocalScale: {x: 0.47645667, y: 0.47645667, z: 0.47645667}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4548491968387563293}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3029316603420021401
 SpriteRenderer:
@@ -144,42 +144,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!58 &3177802682797088488
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5746640681173720454}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 1.7050003
---- !u!114 &6780172053823980435
+--- !u!114 &2681514373772721674
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -188,12 +153,89 @@ MonoBehaviour:
   m_GameObject: {fileID: 5746640681173720454}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2073c1c94cfba514f9707f831d0faed8, type: 3}
+  m_Script: {fileID: 11500000, guid: 0a08aabc167923e4c9a2d21c057519d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationPoint: {fileID: 0}
+  towerName: Mage
+  cost: 100
+  range: 5
+  fireRate: 1
+  damage: 15
+  rotationPoint: {fileID: 4548491968387563293}
+  firePoint: {fileID: 7356013386084555067}
+  projectilePrefab: {fileID: 8790931242601499342, guid: cefa07d693a1f3d418563850d712d077, type: 3}
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 0
-  range: 5
-  rotationSpeed: 5
+    m_Bits: 256
+  animator: {fileID: 4534571562075455145}
+  upgradeLevel: 1
+  maxUpgradeLevel: 3
+  upgradeCost: 50
+  idleAnimationName: Idle
+  shootAnimationName: Shooting
+  magicPrefab: {fileID: 8790931242601499342, guid: cefa07d693a1f3d418563850d712d077, type: 3}
+  splashRadius: 3
+  magicSpeed: 12
+--- !u!1 &7176797132071146386
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7356013386084555067}
+  m_Layer: 7
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7356013386084555067
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7176797132071146386}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.08, y: 1.24, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4548491968387563293}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7432190208444436863
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4548491968387563293}
+  m_Layer: 7
+  m_Name: RotationPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4548491968387563293
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7432190208444436863}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.41, y: -1.29, z: -2.5519636}
+  m_LocalScale: {x: 0.82559615, y: 0.82559615, z: 0.82559615}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7356013386084555067}
+  m_Father: {fileID: 5200757993629116349}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

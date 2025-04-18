@@ -1,5 +1,37 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1083949501589260322
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5574089028028800825}
+  m_Layer: 7
+  m_Name: RotationPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5574089028028800825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1083949501589260322}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.06, y: -0.96, z: -0.3804529}
+  m_LocalScale: {x: 0.9114205, y: 0.9114205, z: 0.9114205}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4815005091196202026}
+  m_Father: {fileID: 794516486138190093}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3527261008642445931
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,7 +44,7 @@ GameObject:
   - component: {fileID: 2405438153974640238}
   - component: {fileID: 4974553725937038012}
   - component: {fileID: 2322647852997510241}
-  - component: {fileID: 1106034459490212215}
+  - component: {fileID: 2499339962450431002}
   m_Layer: 7
   m_Name: Cannon_Without_tower_0
   m_TagString: Untagged
@@ -28,12 +60,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3527261008642445931}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -35.979004, y: -4.0474997, z: 0.1642}
+  m_LocalPosition: {x: -68.2, y: 33.5, z: 0.1642}
   m_LocalScale: {x: 0.43159086, y: 0.43159086, z: 0.43159086}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5574089028028800825}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2405438153974640238
 SpriteRenderer:
@@ -143,7 +176,7 @@ CircleCollider2D:
   m_Offset: {x: 0.0000038146973, y: 0}
   serializedVersion: 2
   m_Radius: 1.38
---- !u!114 &1106034459490212215
+--- !u!114 &2499339962450431002
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,12 +185,58 @@ MonoBehaviour:
   m_GameObject: {fileID: 3527261008642445931}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2073c1c94cfba514f9707f831d0faed8, type: 3}
+  m_Script: {fileID: 11500000, guid: ad01f1f2706398b4fbe847aabc2b4bbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationPoint: {fileID: 0}
+  towerName: Cannon
+  cost: 100
+  range: 5
+  fireRate: 0.6
+  damage: 20
+  rotationPoint: {fileID: 5574089028028800825}
+  firePoint: {fileID: 4815005091196202026}
+  projectilePrefab: {fileID: 5087169523669586592, guid: a939f5f2e23f97c46acecf5148f3492c, type: 3}
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 0
-  range: 5
-  rotationSpeed: 5
+    m_Bits: 256
+  animator: {fileID: 4974553725937038012}
+  upgradeLevel: 1
+  maxUpgradeLevel: 3
+  upgradeCost: 50
+  idleAnimationName: Idle
+  shootAnimationName: Shooting
+  cannonballPrefab: {fileID: 5087169523669586592, guid: a939f5f2e23f97c46acecf5148f3492c, type: 3}
+  explosionRadius: 3
+  knockbackForce: 4
+  cannonballSpeed: 8
+--- !u!1 &8534309174916318093
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4815005091196202026}
+  m_Layer: 7
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4815005091196202026
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8534309174916318093}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.16, y: 1.51, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5574089028028800825}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

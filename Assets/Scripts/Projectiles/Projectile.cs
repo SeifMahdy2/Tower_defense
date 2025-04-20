@@ -11,6 +11,7 @@ public class Projectile : MonoBehaviour
     public int damage;
     
     private Vector3 lastTargetPosition;
+    private bool targetWasDestroyed = false;
     
     // Use this method to set the target and damage
     public void Seek(Transform newTarget, int damageAmount)
@@ -32,8 +33,30 @@ public class Projectile : MonoBehaviour
     
     protected virtual void Update()
     {
+        // Check if target exists using a safe approach
+        bool targetExists = false;
+        Vector3 currentTargetPosition = lastTargetPosition;
+        
+        try 
+        {
+            // This will throw an exception if target was destroyed
+            if (target != null)
+            {
+                targetExists = true;
+                currentTargetPosition = target.position;
+                lastTargetPosition = currentTargetPosition;
+            }
+        }
+        catch (System.Exception)
+        {
+            // Target was destroyed but reference isn't null yet
+            Debug.Log(gameObject.name + ": Target was destroyed");
+            targetWasDestroyed = true;
+            target = null;
+        }
+        
         // If no target (destroyed or never set)
-        if (target == null)
+        if (!targetExists)
         {
             // If we have a last known position, continue moving toward it
             if (lastTargetPosition != Vector3.zero)
@@ -48,18 +71,15 @@ public class Projectile : MonoBehaviour
             return;
         }
         
-        // Update last known position
-        lastTargetPosition = target.position;
-        
         // Calculate direction to target
-        Vector3 direction = target.position - transform.position;
+        Vector3 direction = currentTargetPosition - transform.position;
         float distanceThisFrame = speed * Time.deltaTime;
         
         // Check if we've reached the target
         if (direction.magnitude <= distanceThisFrame)
         {
             // We've reached the target
-            Debug.Log(gameObject.name + " hit target " + target.name);
+            Debug.Log(gameObject.name + " hit target " + (target != null ? target.name : "unknown"));
             HitTarget();
             return;
         }
@@ -104,13 +124,20 @@ public class Projectile : MonoBehaviour
     
     protected virtual void HitTarget()
     {
-        // Deal damage
-        if (target != null)
+        // Deal damage, but only if target still exists
+        if (target != null && !targetWasDestroyed)
         {
-            EnemyHealth health = target.GetComponent<EnemyHealth>();
-            if (health != null)
+            try
             {
-                health.TakeDamage(damage);
+                EnemyHealth health = target.GetComponent<EnemyHealth>();
+                if (health != null)
+                {
+                    health.TakeDamage(damage);
+                }
+            }
+            catch (System.Exception)
+            {
+                Debug.LogWarning("Target was destroyed while trying to apply damage");
             }
         }
         

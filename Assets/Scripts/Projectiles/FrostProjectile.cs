@@ -5,8 +5,8 @@ public class FrostProjectile : Projectile
     public float slowAmount = 0.5f;
     public float slowDuration = 2f;
     
-    // Add Update method to ensure proper movement
-    void Update()
+    // Fix warning by adding override keyword
+    protected override void Update()
     {
         base.Update();
     }
@@ -20,18 +20,26 @@ public class FrostProjectile : Projectile
             Destroy(effectIns, 2f);
         }
         
-        // Apply damage
-        EnemyHealth enemy = target.GetComponent<EnemyHealth>();
-        if (enemy != null)
+        // Only try to access target if it still exists
+        if (target != null)
         {
-            enemy.TakeDamage(damage);
+            // Apply damage
+            EnemyHealth enemy = target.GetComponent<EnemyHealth>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
+            
+            // Apply slow effect
+            EnemyMovement movement = target.GetComponent<EnemyMovement>();
+            if (movement != null)
+            {
+                movement.ApplySlow(slowAmount, slowDuration);
+            }
         }
-        
-        // Apply slow effect
-        EnemyMovement movement = target.GetComponent<EnemyMovement>();
-        if (movement != null)
+        else
         {
-            movement.ApplySlow(slowAmount, slowDuration);
+            Debug.Log("Frost projectile hit position but target was already destroyed");
         }
         
         Destroy(gameObject);

@@ -174,8 +174,8 @@ MonoBehaviour:
   idleAnimationName: Idle
   shootAnimationName: Shooting
   frostPrefab: {fileID: 5083969121154366131, guid: 8e68a42d7cf507b4691a24eb53de00a4, type: 3}
-  slowAmount: 1
-  slowDuration: 1.5
+  slowAmount: 0.5
+  slowDuration: 0.8
   frostSpeed: 10
 --- !u!1 &7023852407017707923
 GameObject:

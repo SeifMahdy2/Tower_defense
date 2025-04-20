@@ -4,8 +4,8 @@ public class MageProjectile : Projectile
 {
     public float splashRadius = 1.5f;
     
-    // Add Update method to ensure proper movement
-    void Update()
+    // Fix warning by adding override keyword
+    protected override void Update()
     {
         base.Update();
     }

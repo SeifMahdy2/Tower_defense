@@ -34,7 +34,6 @@ public class TowerPlacementManager : MonoBehaviour
     private GameObject selectedTowerPrefab;
     private GameObject ghostTower;
     private int selectedTowerCost;
-    private bool isDragging = false;
     private Vector3 touchOffset;
     private SpriteRenderer ghostSpriteRenderer;
     private Tower ghostTowerComponent;
@@ -57,14 +56,26 @@ public class TowerPlacementManager : MonoBehaviour
         // If there's no GameManager, use the default gold value
         if (gameManager == null)
         {
-            UpdateGoldText();
             Debug.LogWarning("No GameManager found! Using default gold value.");
         }
         else
         {
             // If GameManager exists, use its gold instead
             gold = gameManager.GetCurrentGold();
-            UpdateGoldText();
+            Debug.Log("Found GameManager. Starting gold: " + gold);
+        }
+        
+        // Always update gold text at start
+        UpdateGoldText();
+        
+        // Log the current gold text value for debugging
+        if (goldText != null)
+        {
+            Debug.Log("Gold text initialized to: " + goldText.text);
+        }
+        else
+        {
+            Debug.LogError("Gold text reference is missing! Gold display won't work.");
         }
         
         rangeIndicator.SetActive(false);
@@ -72,8 +83,19 @@ public class TowerPlacementManager : MonoBehaviour
 
     private void Update()
     {
-        // Direct tower placement code is kept for testing purposes
-        // but is now triggered by the drag and drop system
+        // Check if the game manager exists and game is over
+        if (gameManager != null && GetComponent<TowerPlacementManager>().enabled)
+        {
+            // Check if goldText isn't being updated properly
+            if (goldText != null && int.TryParse(goldText.text, out int displayedGold))
+            {
+                if (displayedGold != gameManager.GetCurrentGold())
+                {
+                    // Force update if the displayed gold doesn't match the actual gold
+                    UpdateGoldText();
+                }
+            }
+        }
     }
 
     // Called by TowerButton when dragging begins
@@ -155,8 +177,6 @@ public class TowerPlacementManager : MonoBehaviour
         
         // Set ghost tower inactive initially
         ghostTower.SetActive(false);
-        
-        isDragging = true;
     }
 
     private void ApplyGhostMaterial(GameObject tower)
@@ -269,37 +289,21 @@ public class TowerPlacementManager : MonoBehaviour
 
     private bool IsPlacementValid(Vector3 position)
     {
-        // Check if position is on a valid placement area
-        Collider2D placementArea = Physics2D.OverlapCircle(position, 0.3f, placementAreaLayer);
-        if (placementArea == null)
-        {
-            Debug.Log("No valid placement area found");
-            return false;
-        }
+        // Get the current position
+        Vector2 pos = new Vector2(position.x, position.y);
         
-        // Check for any towers or obstacles using the Tower layer
-        Collider2D[] obstacles = Physics2D.OverlapCircleAll(position, 1.5f, obstacleLayer);
-        if (obstacles.Length > 0)
-        {
-            Debug.Log("Found " + obstacles.Length + " obstacles at position " + position);
-            foreach (var obstacle in obstacles)
-            {
-                Debug.Log("Obstacle: " + obstacle.name + " on layer: " + LayerMask.LayerToName(obstacle.gameObject.layer));
-            }
-            return false;
-        }
+        // Check if placement is in a valid area for towers
+        bool isValidArea = Physics2D.OverlapPoint(pos, placementAreaLayer);
         
-        // Check if player has enough gold
-        if (gameManager != null)
-        {
-            // Use GameManager's gold system
-            return gameManager.GetCurrentGold() >= selectedTowerCost;
-        }
-        else
-        {
-            // Fallback to internal gold
-            return gold >= selectedTowerCost;
-        }
+        // Check if position is already occupied by another tower or obstacle
+        bool isOccupied = Physics2D.OverlapCircle(pos, 0.6f, obstacleLayer);
+
+        // Check if we can afford it
+        bool canAfford = CanAffordSelectedTower();
+        
+        // Don't check if game is over - allow placement regardless of wave status
+        
+        return isValidArea && !isOccupied && canAfford;
     }
 
     private void TryPlaceTower()
@@ -319,8 +323,10 @@ public class TowerPlacementManager : MonoBehaviour
                 // Fallback to internal gold
                 gold -= selectedTowerCost;
                 goldSpent = true;
-                UpdateGoldText();
             }
+            
+            // Always update the gold text immediately after spending gold
+            UpdateGoldText();
             
             if (goldSpent)
             {
@@ -347,6 +353,9 @@ public class TowerPlacementManager : MonoBehaviour
                     Debug.Log("Added collider with radius: " + collider.radius);
                 }
                 
+                // Make sure gold display is updated again after tower placement
+                UpdateGoldText();
+                
                 // Play placement sound
                 // audioSource.PlayOneShot(placementSound);
                 
@@ -364,6 +373,9 @@ public class TowerPlacementManager : MonoBehaviour
         
         // Deselect tower
         DeselectTower();
+        
+        // Update gold text one final time
+        UpdateGoldText();
     }
 
     public void SelectArcherTower()
@@ -371,6 +383,7 @@ public class TowerPlacementManager : MonoBehaviour
         selectedTowerPrefab = archerTowerPrefab;
         selectedTowerCost = archerTowerCost;
         CleanupGhost();
+        UpdateGoldText();
     }
 
     public void SelectMageTower()
@@ -378,6 +391,7 @@ public class TowerPlacementManager : MonoBehaviour
         selectedTowerPrefab = mageTowerPrefab;
         selectedTowerCost = mageTowerCost;
         CleanupGhost();
+        UpdateGoldText();
     }
 
     public void SelectFrostTower()
@@ -385,6 +399,7 @@ public class TowerPlacementManager : MonoBehaviour
         selectedTowerPrefab = frostTowerPrefab;
         selectedTowerCost = frostTowerCost;
         CleanupGhost();
+        UpdateGoldText();
     }
 
     public void SelectCannonTower()
@@ -392,6 +407,7 @@ public class TowerPlacementManager : MonoBehaviour
         selectedTowerPrefab = cannonTowerPrefab;
         selectedTowerCost = cannonTowerCost;
         CleanupGhost();
+        UpdateGoldText();
     }
 
     public void DeselectTower()
@@ -399,6 +415,7 @@ public class TowerPlacementManager : MonoBehaviour
         selectedTowerPrefab = null;
         selectedTowerCost = 0;
         CleanupGhost();
+        UpdateGoldText();
     }
 
     private void CleanupGhost()
@@ -424,11 +441,17 @@ public class TowerPlacementManager : MonoBehaviour
             if (gameManager != null)
             {
                 goldText.text = gameManager.GetCurrentGold().ToString();
+                // Also force the UI update in GameManager to ensure consistency
+                gameManager.ForceUIUpdate();
             }
             else
             {
                 goldText.text = gold.ToString();
             }
+        }
+        else
+        {
+            Debug.LogWarning("TowerPlacementManager: Gold text reference is missing!");
         }
     }
 
@@ -442,6 +465,18 @@ public class TowerPlacementManager : MonoBehaviour
         else
         {
             return gold >= cost;
+        }
+    }
+
+    private bool CanAffordSelectedTower()
+    {
+        if (gameManager != null)
+        {
+            return gameManager.GetCurrentGold() >= selectedTowerCost;
+        }
+        else
+        {
+            return gold >= selectedTowerCost;
         }
     }
 } 

@@ -143,7 +143,7 @@ public class Tower : MonoBehaviour
     
     protected virtual void Update()
     {
-        if (hasTarget)
+        if (hasTarget && target != null)
         {
             // Rotate tower to face target
             RotateToTarget();
@@ -169,8 +169,17 @@ public class Tower : MonoBehaviour
         }
         else
         {
+            // If we have a target flag but the target is null, reset it
+            if (hasTarget && target == null)
+            {
+                hasTarget = false;
+                PlayIdleAnimation();
+            }
             // Find new target
-            FindTarget();
+            else
+            {
+                FindTarget();
+            }
         }
     }
     

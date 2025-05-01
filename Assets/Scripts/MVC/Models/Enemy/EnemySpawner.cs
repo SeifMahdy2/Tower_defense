@@ -49,6 +49,9 @@ public class EnemySpawner : MonoBehaviour
     
     // Track which waves have been completed to avoid duplicate rewards
     private bool[] waveCompletionRewardGiven;
+    
+    // Flag to track if spawning is paused (e.g. when game over panel is active)
+    private bool isPaused = false;
 
     private void Awake() 
     {
@@ -101,6 +104,7 @@ public class EnemySpawner : MonoBehaviour
         totalEnemiesInWave = 0;
         isSpawning = false;
         allWavesCompleted = false;
+        isPaused = false;
         
         // Initialize wave completion tracking array
         waveCompletionRewardGiven = new bool[waves.Length];
@@ -145,6 +149,34 @@ public class EnemySpawner : MonoBehaviour
             StartCoroutine(StartNextWave(0f)); // Start immediately
         }
     }
+    
+    // Method to pause/resume enemy spawning
+    public void SetPaused(bool pause)
+    {
+        isPaused = pause;
+        
+        // If pausing, stop any active spawning coroutine
+        if (pause && isSpawning)
+        {
+            StopAllCoroutines();
+            isSpawning = false;
+        }
+        // If unpausing and we're in the middle of a wave, restart spawning
+        else if (!pause && currentWave > 0 && currentWave <= waves.Length && enemiesLeftToSpawn > 0)
+        {
+            StartCoroutine(ResumeSpawning());
+        }
+    }
+    
+    private IEnumerator ResumeSpawning()
+    {
+        if (currentWave > 0 && currentWave <= waves.Length)
+        {
+            Wave currentWaveData = waves[currentWave - 1];
+            isSpawning = true;
+            yield return StartCoroutine(SpawnWave(currentWaveData));
+        }
+    }
 
     private IEnumerator StartNextWave(float delay = -1f) 
     {
@@ -155,11 +187,25 @@ public class EnemySpawner : MonoBehaviour
             yield break;
         }
         
+        // Don't start if we're paused
+        if (isPaused)
+        {
+            Debug.Log("Cannot start next wave - spawning is paused!");
+            yield break;
+        }
+        
         // Use the specified delay or default to timeBetweenWaves
         float waitTime = delay >= 0f ? delay : timeBetweenWaves;
         
         // Wait before starting the wave
         yield return new WaitForSeconds(waitTime);
+        
+        // Check if we're paused after waiting
+        if (isPaused)
+        {
+            Debug.Log("Cannot start next wave - spawning is paused!");
+            yield break;
+        }
         
         // Check if we've already completed all waves
         if (currentWave >= waves.Length)
@@ -202,28 +248,63 @@ public class EnemySpawner : MonoBehaviour
         // Spawn easy enemies
         for (int i = 0; i < wave.easyEnemyCount; i++)
         {
+            // Check if we're paused before each spawn
+            if (isPaused)
+            {
+                isSpawning = false;
+                yield break;
+            }
+            
             SpawnEnemy(easyEnemyPrefab);
             yield return new WaitForSeconds(wave.spawnInterval);
         }
         
         // Wait between groups
-        if (wave.easyEnemyCount > 0 && (wave.mediumEnemyCount > 0 || wave.hardEnemyCount > 0))
+        if (!isPaused && wave.easyEnemyCount > 0 && (wave.mediumEnemyCount > 0 || wave.hardEnemyCount > 0))
             yield return new WaitForSeconds(wave.timeBetweenGroups);
+        
+        // Check if we're paused after waiting
+        if (isPaused)
+        {
+            isSpawning = false;
+            yield break;
+        }
         
         // Spawn medium enemies
         for (int i = 0; i < wave.mediumEnemyCount; i++)
         {
+            // Check if we're paused before each spawn
+            if (isPaused)
+            {
+                isSpawning = false;
+                yield break;
+            }
+            
             SpawnEnemy(mediumEnemyPrefab);
             yield return new WaitForSeconds(wave.spawnInterval);
         }
         
         // Wait between groups
-        if (wave.mediumEnemyCount > 0 && wave.hardEnemyCount > 0)
+        if (!isPaused && wave.mediumEnemyCount > 0 && wave.hardEnemyCount > 0)
             yield return new WaitForSeconds(wave.timeBetweenGroups);
+        
+        // Check if we're paused after waiting
+        if (isPaused)
+        {
+            isSpawning = false;
+            yield break;
+        }
         
         // Spawn hard enemies
         for (int i = 0; i < wave.hardEnemyCount; i++)
         {
+            // Check if we're paused before each spawn
+            if (isPaused)
+            {
+                isSpawning = false;
+                yield break;
+            }
+            
             SpawnEnemy(hardEnemyPrefab);
             yield return new WaitForSeconds(wave.spawnInterval);
         }
@@ -247,6 +328,13 @@ public class EnemySpawner : MonoBehaviour
         }
         
         GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+        
+        // Ensure the enemy has the "Enemy" tag
+        if (enemy.tag != "Enemy")
+        {
+            enemy.tag = "Enemy";
+        }
+        
         enemy.transform.parent = transform; // Parent to spawner for organization
         enemiesLeftToSpawn--;
         enemiesAlive++;
@@ -308,10 +396,26 @@ public class EnemySpawner : MonoBehaviour
                 Debug.Log("Wave " + currentWave + " completion reward given");
             }
             
-            // Start next wave automatically if enabled
-            if (autoStartNextWave && currentWave < waves.Length)
+            // Wait a moment before starting the next coroutine to ensure clean separation
+            CancelInvoke("TriggerNextWave");
+            Invoke("TriggerNextWave", 2.0f);
+        }
+    }
+    
+    private void TriggerNextWave()
+    {
+        // Start next wave automatically if enabled and not paused
+        if (autoStartNextWave && currentWave < waves.Length && !isPaused)
+        {
+            // Make sure no enemies are still alive before starting
+            if (enemiesAlive <= 0)
             {
                 StartCoroutine(StartNextWave());
+            }
+            else
+            {
+                // If enemies are still alive, try again later
+                Invoke("TriggerNextWave", 2.0f);
             }
         }
     }
@@ -351,5 +455,25 @@ public class EnemySpawner : MonoBehaviour
     public bool IsWaveInProgress()
     {
         return isSpawning || enemiesAlive > 0;
+    }
+    
+    // Method to stop all spawning and clear all enemies
+    public void StopAndClearEnemies()
+    {
+        StopAllCoroutines();
+        SetPaused(true);
+        
+        // Find and destroy all enemies with "Enemy" tag
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemy in enemies)
+        {
+            Destroy(enemy);
+        }
+        
+        // Reset counters
+        enemiesAlive = 0;
+        isSpawning = false;
+        
+        Debug.Log("Stopped spawning and cleared " + enemies.Length + " enemies");
     }
 }

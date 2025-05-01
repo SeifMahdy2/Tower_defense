@@ -18,17 +18,11 @@ public class EnemyMovement : MonoBehaviour
     {
         // Find the path
         path = FindObjectOfType<WaypointPath>();
-        
         if (path == null)
-        {
-            Debug.LogError("No WaypointPath found in the scene!");
             return;
-        }
         
-        // Set initial target
+        // Initialize
         target = path.GetWaypoint(waypointIndex);
-        
-        // Store original speed
         originalSpeed = speed;
         
         // Get components
@@ -36,15 +30,14 @@ public class EnemyMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         healthComponent = GetComponent<EnemyHealth>();
         
-        // Play walk animation if available
+        // Start walking animation
         if (animator != null)
         {
-            // Check if the parameter exists first to avoid error
             try {
                 animator.SetBool("IsWalking", true);
             }
-            catch (System.Exception e) {
-                Debug.LogWarning("Failed to set IsWalking parameter: " + e.Message);
+            catch {
+                // Animation parameter might not exist
             }
         }
     }
@@ -60,9 +53,7 @@ public class EnemyMovement : MonoBehaviour
         
         // Flip sprite based on direction
         if (spriteRenderer != null)
-        {
             spriteRenderer.flipX = dir.x < 0;
-        }
         
         // Check if reached waypoint
         if (Vector3.Distance(transform.position, target.position) <= 0.2f)
@@ -83,48 +74,25 @@ public class EnemyMovement : MonoBehaviour
     
     void ReachedEnd()
     {
-        // Get damage amount from health component (based on difficulty)
-        int damageAmount = 1;
-        if (healthComponent != null)
-        {
-            damageAmount = healthComponent.GetDamageToBase();
-            Debug.Log(gameObject.name + " reached end and will deal " + damageAmount + " damage to base");
-        }
+        // Get damage amount from health component
+        int damageAmount = healthComponent != null ? healthComponent.GetDamageToBase() : 1;
         
-        // Damage the player castle based on enemy difficulty
+        // Damage the player castle
         TD.GameManager gameManager = FindObjectOfType<TD.GameManager>();
         if (gameManager != null)
-        {
-            try
-            {
-                // Apply damage to the base
-                gameManager.EnemyReachedEnd(damageAmount);
-                Debug.Log("Applied " + damageAmount + " damage to base. Base health now: " + gameManager.GetHealth());
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError("Failed to apply damage to base: " + e.Message);
-            }
-        }
-        else
-        {
-            Debug.LogError("GameManager not found! Cannot apply damage to base.");
-        }
+            gameManager.EnemyReachedEnd(damageAmount);
         
-        // Tell the EnemySpawner this enemy is destroyed
+        // Tell the spawner this enemy is destroyed
         EnemySpawner.onEnemyDestroyed.Invoke();
         
         // Destroy the enemy
         Destroy(gameObject);
     }
     
-    // Called by FrostProjectile to slow down the enemy
+    // Called by frost towers to slow down the enemy
     public void ApplySlow(float slowAmount, float duration)
     {
-        // Stop any previous slow coroutines
         StopAllCoroutines();
-        
-        // Apply the slow effect
         StartCoroutine(SlowEffect(slowAmount, duration));
     }
     

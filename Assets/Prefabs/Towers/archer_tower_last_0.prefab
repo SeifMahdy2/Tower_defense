@@ -221,7 +221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   towerName: Archer
   cost: 100
-  range: 5
+  range: 7
   fireRate: 1.5
   damage: 10
   rotationPoint: {fileID: 2881184393462604037}
@@ -231,10 +231,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   animator: {fileID: 8090057748789157323}
-  upgradeLevel: 1
-  maxUpgradeLevel: 3
+  _upgradeLevel: 1
+  maxUpgradeLevel: 2
   upgradeCost: 50
+  upgradeColor: {r: 1, g: 0.8, b: 0.2, a: 1}
   idleAnimationName: Idle
   shootAnimationName: Shooting
+  towerType: archer
   arrowPrefab: {fileID: 2223384781503515584, guid: cc3c2b920b2d1b449ac090e27894ae3b, type: 3}
   arrowSpeed: 15

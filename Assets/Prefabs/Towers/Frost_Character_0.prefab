@@ -158,7 +158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   towerName: Frost
   cost: 125
-  range: 4.5
+  range: 7
   fireRate: 1.5
   damage: 7
   rotationPoint: {fileID: 2377972139172521507}
@@ -168,11 +168,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   animator: {fileID: 3066141988125659116}
-  upgradeLevel: 1
-  maxUpgradeLevel: 3
-  upgradeCost: 75
+  _upgradeLevel: 1
+  maxUpgradeLevel: 2
+  upgradeCost: 50
+  upgradeColor: {r: 1, g: 0.8, b: 0.2, a: 1}
   idleAnimationName: Idle
   shootAnimationName: Shooting
+  towerType: frost
   frostPrefab: {fileID: 5083969121154366131, guid: 8e68a42d7cf507b4691a24eb53de00a4, type: 3}
   slowAmount: 0.5
   slowDuration: 0.8

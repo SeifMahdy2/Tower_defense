@@ -189,8 +189,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   towerName: Cannon
-  cost: 100
-  range: 5
+  cost: 175
+  range: 7
   fireRate: 0.6
   damage: 20
   rotationPoint: {fileID: 5574089028028800825}
@@ -200,11 +200,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   animator: {fileID: 4974553725937038012}
-  upgradeLevel: 1
-  maxUpgradeLevel: 3
+  _upgradeLevel: 1
+  maxUpgradeLevel: 2
   upgradeCost: 50
+  upgradeColor: {r: 1, g: 0.8, b: 0.2, a: 1}
   idleAnimationName: Idle
   shootAnimationName: Shooting
+  towerType: cannon
   cannonballPrefab: {fileID: 5087169523669586592, guid: a939f5f2e23f97c46acecf5148f3492c, type: 3}
   explosionRadius: 3
   knockbackForce: 4

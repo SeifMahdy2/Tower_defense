@@ -1,0 +1,88 @@
+Tower Upgrade Panel - Setup Instructions
+
+1. Create a new Panel GameObject in your Canvas
+   - Right-click on your Canvas in the Hierarchy
+   - Select UI > Panel
+   - Name it "TowerUpgradePanel"
+
+2. Configure the Panel's RectTransform
+   - Set Width to 300
+   - Set Height to 200
+   - Set Anchors to "Top Center" 
+   - Set Pivot to (0.5, 1)
+   - This panel will appear above the tower
+
+3. Add a Background Image
+   - Make sure the Panel has an Image component
+   - Adjust the color to match your UI theme (semi-transparent is recommended)
+
+4. Add Panel Content:
+
+   a. Tower Name Text
+      - Create a TextMeshPro - Text (UI) as a child of the panel
+      - Name it "TowerNameText"
+      - Position it at the top of the panel
+      - Set font size to 20
+      - Set font style to Bold
+      - Set text alignment to Center
+
+   b. Level Text
+      - Create a TextMeshPro - Text (UI) as a child of the panel
+      - Name it "LevelText"
+      - Position it below the Tower Name Text
+      - Default text: "Level: 1"
+
+   c. Upgrade Info Text
+      - Create a TextMeshPro - Text (UI) as a child of the panel
+      - Name it "UpgradeInfoText"
+      - Position it in the middle of the panel
+      - Make this multi-line with a smaller font size
+      - Default text: "Upgrade improves damage and range"
+
+   d. Upgrade Cost Text
+      - Create a TextMeshPro - Text (UI) as a child of the panel
+      - Name it "UpgradeCostText"
+      - Position it near the upgrade button
+      - Default text: "Cost: 50"
+
+   e. Upgrade Button
+      - Create a Button as a child of the panel
+      - Name it "UpgradeButton"
+      - Position it at the bottom of the panel
+      - Add a TextMeshPro - Text (UI) as a child of the button
+      - Set the button text to "UPGRADE"
+
+   f. Max Level Object
+      - Create a GameObject as a child of the panel
+      - Name it "MaxLevelObject" 
+      - Add a TextMeshPro - Text (UI) as a child
+      - Set text to "MAX LEVEL REACHED"
+      - This object will be shown when the tower is at max level
+      - Set it to inactive by default
+
+5. Add the TowerUpgradePanel script to the panel GameObject
+
+6. Connect References in the Inspector:
+   - Drag the panel itself to the "Panel Container" field
+   - Drag TowerNameText to the "Tower Name Text" field
+   - Drag UpgradeCostText to the "Upgrade Cost Text" field
+   - Drag LevelText to the "Level Text" field
+   - Drag UpgradeButton to the "Upgrade Button" field
+   - Drag UpgradeInfoText to the "Upgrade Info Text" field 
+   - Drag MaxLevelObject to the "Max Level Object" field
+
+7. Save as a Prefab
+   - Drag the TowerUpgradePanel from the Hierarchy to the Prefabs/UI folder in your Project window
+   - This will create a reusable prefab
+
+8. Add the panel to your scene
+   - If not already in the scene, drag the TowerUpgradePanel prefab to your main Canvas
+   - Make sure it's initially inactive
+
+9. Set up the TowerSelectionManager
+   - Create an empty GameObject in your scene
+   - Name it "TowerSelectionManager"
+   - Add the TowerSelectionManager script to it
+   - Drag your TowerUpgradePanel to the "Upgrade Panel" field
+
+Note: To make tower selection work, make sure your towers are on a layer named "Tower". You can create this layer in the Tags and Layers settings in Unity. 

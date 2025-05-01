@@ -157,8 +157,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   towerName: Mage
-  cost: 100
-  range: 5
+  cost: 150
+  range: 7
   fireRate: 1
   damage: 15
   rotationPoint: {fileID: 4548491968387563293}
@@ -168,14 +168,19 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   animator: {fileID: 4534571562075455145}
-  upgradeLevel: 1
-  maxUpgradeLevel: 3
+  _upgradeLevel: 1
+  maxUpgradeLevel: 2
   upgradeCost: 50
+  upgradeColor: {r: 1, g: 0.8, b: 0.2, a: 1}
   idleAnimationName: Idle
   shootAnimationName: Shooting
+  towerType: mage
   magicPrefab: {fileID: 8790931242601499342, guid: cefa07d693a1f3d418563850d712d077, type: 3}
   splashRadius: 3
   magicSpeed: 12
+  appliesDoT: 0
+  dotDamage: 5
+  dotDuration: 3
 --- !u!1 &7176797132071146386
 GameObject:
   m_ObjectHideFlags: 0

@@ -197,8 +197,12 @@ public class EnemySpawner : MonoBehaviour
         // Use the specified delay or default to timeBetweenWaves
         float waitTime = delay >= 0f ? delay : timeBetweenWaves;
         
+        Debug.Log("Waiting " + waitTime + " seconds before starting the next wave...");
+        
         // Wait before starting the wave
         yield return new WaitForSeconds(waitTime);
+        
+        Debug.Log("Wait completed. Starting wave now if not paused.");
         
         // Check if we're paused after waiting
         if (isPaused)
@@ -398,6 +402,7 @@ public class EnemySpawner : MonoBehaviour
             
             // Wait a moment before starting the next coroutine to ensure clean separation
             CancelInvoke("TriggerNextWave");
+            Debug.Log("Scheduling next wave trigger in 2.0 seconds. Wave " + (currentWave + 1) + " will start after that with " + timeBetweenWaves + " seconds delay");
             Invoke("TriggerNextWave", 2.0f);
         }
     }
@@ -410,11 +415,14 @@ public class EnemySpawner : MonoBehaviour
             // Make sure no enemies are still alive before starting
             if (enemiesAlive <= 0)
             {
-                StartCoroutine(StartNextWave());
+                Debug.Log("Starting next wave with delay of " + timeBetweenWaves + " seconds");
+                StopAllCoroutines(); // Stop any existing wave coroutines
+                StartCoroutine(StartNextWave(-1f)); // Explicitly use the timeBetweenWaves value
             }
             else
             {
                 // If enemies are still alive, try again later
+                Debug.Log("Enemies still alive, delaying next wave check");
                 Invoke("TriggerNextWave", 2.0f);
             }
         }

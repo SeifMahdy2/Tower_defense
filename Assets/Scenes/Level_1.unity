@@ -12772,7 +12772,7 @@ MonoBehaviour:
     hardEnemyCount: 0
     spawnInterval: 3
     timeBetweenGroups: 4
-  timeBetweenWaves: 0
+  timeBetweenWaves: 10
   autoStartNextWave: 1
   currentWave: 3
   enemiesLeftToSpawn: 0

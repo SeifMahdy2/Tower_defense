@@ -11403,7 +11403,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 705, y: -124}
+  m_AnchoredPosition: {x: 705, y: -173}
   m_SizeDelta: {x: 7249.4414, y: 1522.6855}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1565690905
@@ -12759,19 +12759,19 @@ MonoBehaviour:
     mediumEnemyCount: 0
     hardEnemyCount: 0
     spawnInterval: 3
-    timeBetweenGroups: 8
-  - waveName: First Wave
+    timeBetweenGroups: 3
+  - waveName: Second Wave
     easyEnemyCount: 8
-    mediumEnemyCount: 4
+    mediumEnemyCount: 2
     hardEnemyCount: 0
     spawnInterval: 3
-    timeBetweenGroups: 8
-  - waveName: First Wave
+    timeBetweenGroups: 4
+  - waveName: Third Wave
     easyEnemyCount: 10
     mediumEnemyCount: 6
     hardEnemyCount: 0
     spawnInterval: 3
-    timeBetweenGroups: 8
+    timeBetweenGroups: 4
   timeBetweenWaves: 0
   autoStartNextWave: 1
   currentWave: 3

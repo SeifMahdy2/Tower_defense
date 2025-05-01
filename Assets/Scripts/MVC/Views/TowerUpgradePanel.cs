@@ -148,24 +148,21 @@ public class TowerUpgradePanel : MonoBehaviour
             
         Vector2 size = panelRect.sizeDelta;
         
-        // Get the safe area
-        Rect safeArea = Screen.safeArea;
-        
         // Check right edge
-        if (position.x + size.x * 0.5f > safeArea.x + safeArea.width - screenEdgeMargin)
-            position.x = safeArea.x + safeArea.width - screenEdgeMargin - size.x * 0.5f;
+        if (position.x + size.x * 0.5f > Screen.width - screenEdgeMargin)
+            position.x = Screen.width - screenEdgeMargin - size.x * 0.5f;
         
         // Check left edge
-        if (position.x - size.x * 0.5f < safeArea.x + screenEdgeMargin)
-            position.x = safeArea.x + screenEdgeMargin + size.x * 0.5f;
+        if (position.x - size.x * 0.5f < screenEdgeMargin)
+            position.x = screenEdgeMargin + size.x * 0.5f;
         
         // Check top edge
-        if (position.y + size.y * 0.5f > safeArea.y + safeArea.height - screenEdgeMargin)
-            position.y = safeArea.y + safeArea.height - screenEdgeMargin - size.y * 0.5f;
+        if (position.y + size.y * 0.5f > Screen.height - screenEdgeMargin)
+            position.y = Screen.height - screenEdgeMargin - size.y * 0.5f;
         
         // Check bottom edge
-        if (position.y - size.y * 0.5f < safeArea.y + screenEdgeMargin)
-            position.y = safeArea.y + screenEdgeMargin + size.y * 0.5f;
+        if (position.y - size.y * 0.5f < screenEdgeMargin)
+            position.y = screenEdgeMargin + size.y * 0.5f;
     }
 
     private void UpdateUIElements()

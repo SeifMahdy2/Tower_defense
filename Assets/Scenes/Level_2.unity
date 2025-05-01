@@ -17899,20 +17899,20 @@ MonoBehaviour:
   - waveName: First Wave
     easyEnemyCount: 10
     mediumEnemyCount: 2
-    hardEnemyCount: 0
+    hardEnemyCount: 1
     spawnInterval: 3
     timeBetweenGroups: 8
   - waveName: Second Wave
     easyEnemyCount: 8
     mediumEnemyCount: 6
-    hardEnemyCount: 2
-    spawnInterval: 2
+    hardEnemyCount: 4
+    spawnInterval: 3
     timeBetweenGroups: 8
   - waveName: Third Wave
     easyEnemyCount: 8
     mediumEnemyCount: 8
-    hardEnemyCount: 6
-    spawnInterval: 2
+    hardEnemyCount: 8
+    spawnInterval: 3
     timeBetweenGroups: 0
   timeBetweenWaves: 10
   autoStartNextWave: 1

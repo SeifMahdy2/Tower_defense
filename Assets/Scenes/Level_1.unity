@@ -4418,7 +4418,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1031886526
 MonoBehaviour:
@@ -12261,7 +12261,7 @@ RectTransform:
   - {fileID: 743263161}
   - {fileID: 649519033}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -12755,23 +12755,23 @@ MonoBehaviour:
   enemyCountText: {fileID: 1326911665}
   waves:
   - waveName: First Wave
-    easyEnemyCount: 1
+    easyEnemyCount: 10
     mediumEnemyCount: 0
     hardEnemyCount: 0
-    spawnInterval: 0
-    timeBetweenGroups: 0
+    spawnInterval: 3
+    timeBetweenGroups: 8
   - waveName: First Wave
-    easyEnemyCount: 1
-    mediumEnemyCount: 0
+    easyEnemyCount: 8
+    mediumEnemyCount: 4
     hardEnemyCount: 0
-    spawnInterval: 0
-    timeBetweenGroups: 0
+    spawnInterval: 3
+    timeBetweenGroups: 8
   - waveName: First Wave
-    easyEnemyCount: 1
-    mediumEnemyCount: 0
+    easyEnemyCount: 10
+    mediumEnemyCount: 6
     hardEnemyCount: 0
-    spawnInterval: 0
-    timeBetweenGroups: 0
+    spawnInterval: 3
+    timeBetweenGroups: 8
   timeBetweenWaves: 0
   autoStartNextWave: 1
   currentWave: 3

@@ -57,7 +57,7 @@ public class EnemyHealth : MonoBehaviour
         switch (difficulty)
         {
             case EnemyDifficulty.Easy:
-                maxHealth = 120;
+                maxHealth = 100;
                 damageToBase = 10;
                 break;
             case EnemyDifficulty.Medium:
@@ -65,7 +65,7 @@ public class EnemyHealth : MonoBehaviour
                 damageToBase = 40;
                 break;
             case EnemyDifficulty.Hard:
-                maxHealth = 750;
+                maxHealth = 600;
                 damageToBase = 60;
                 break;
         }
